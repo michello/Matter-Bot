@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from appdef import app
+## each page will have its own python file/module, which will be imported from here:
 import main
 
 if __name__ == "__main__":
