@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  {% for chat in sc_history %}
+    <p>{{ chat['username'] }}</p>
+    <p>{{ chat['bot_id'] }}</p>
+    <p>{{ chat['text'] }}</p>
+  {% endfor %}
+
+{% endblock %}

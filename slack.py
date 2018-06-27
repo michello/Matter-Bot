@@ -1,5 +1,6 @@
+from flask import *
 from slackclient import SlackClient
-
+from appdef import app
 slack_token = open("slack_creds.txt","r").readline().strip()
 
 sc = SlackClient(slack_token)
@@ -12,9 +13,13 @@ sc.api_call(
 )
 '''
 
-sc_history = sc.api_call(
-  "conversations.history",
-  channel="CBEDJTJUQ"
-)
+@app.route('/history')
+def chatHistory():
 
-print(sc_history['messages'])
+  sc_history = sc.api_call(
+    "conversations.history",
+    channel="CBEDJTJUQ"
+  )
+
+  sc_history = sc_history['messages']
+  return render_template('friends.html', sc_history=sc_history)
