@@ -2,7 +2,7 @@
 {% block content %}
 
   {% for chat in sc_history %}
-    <p>{{ chat['username'] }}</p>
+    <span class="label label-default">{{ chat['username'] }}</span>
     <p>{{ chat['bot_id'] }}</p>
     <p>{{ chat['text'] }}</p>
   {% endfor %}
