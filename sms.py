@@ -5,6 +5,7 @@ import twilio.rest
 from flask import *
 from appdef import app
 from twilio.rest import Client
+from twilio.twiml.messaging_response import Body, Media, Message, MessagingResponse
 
 TWILIO_SID = os.environ['TWILIO_SID']
 TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
@@ -25,4 +26,6 @@ def incoming_sms():
     print record
   
   # Start our TwiML response here
-  resp = MessagingResponse()
+  response = MessagingResponse()
+  message = Message() 
+  message.body('Greetings.')
