@@ -2,9 +2,11 @@
 {% block content %}
 
   {% for chat in sc_history %}
-    <span class="label label-default">{{ chat['username'] }}</span>
-    <p>{{ chat['bot_id'] }}</p>
-    <p>{{ chat['text'] }}</p>
+    {% if (chat['username']) %}
+      <span class="label label-default">{{ chat['username'] }}</span>
+      <p>{{ chat['bot_id'] }}</p>
+      <p>{{ chat['text'] }}</p>
+    {% endif %}
   {% endfor %}
 
 {% endblock %}
