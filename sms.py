@@ -7,6 +7,12 @@ from appdef import app
 from twilio.rest import Client
 from twilio.twiml.messaging_response import Body, Media, Message, MessagingResponse
 
+from slackclient import SlackClient
+
+slack_token = open("slack_creds.txt","r").readline().strip()
+sc = SlackClient(slack_token)
+
+
 TWILIO_SID = os.environ['TWILIO_SID']
 TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 
@@ -21,10 +27,14 @@ def incoming_sms():
     if (sms.to == "+12012989124"):
       incoming.append(sms.body)
 
-  # Just testing
   for record in incoming:
-    print record
-  
+    print(record)
+    sc.api_call(
+      "chat.postMessage",
+      channel="recommendations",
+      text=record
+    )
+
   # Start our TwiML response here
   response = MessagingResponse()
   message = Message() 
