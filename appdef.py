@@ -21,18 +21,3 @@ conn = pymysql.connect(
   charset='utf8mb4',
   cursorclass=pymysql.cursors.DictCursor)
 '''
-
-"""@app.route("/sms", methods=["GET", "POST"])
-def sms_reply():
-    resp = MessagingResponse()
-    #body = request.values.get('Body', None)
-    message_body = request.form['Body']
-    #for debuging the SMS instercept
-    #saveFile = open('bodyfile.txt', 'w')
-    #saveFile.write(body)
-    #saveFile.close()
-
-    resp.message("Testting the SMS responce")
-    return str(resp)
-    return str(body)
-"""
