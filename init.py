@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from appdef import app, db
+from appdef import app#, db
 ## each page will have its own python file/module, which will be imported from here:
 import main, slack, sms
 
