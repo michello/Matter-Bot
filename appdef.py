@@ -1,10 +1,13 @@
 from flask import *
 import sms
-import pymysql.cursors
+from db_connection import *
 
 # for database connection if needed
 
 app = Flask(__name__)
+db = MyDB()
+
+'''
 conn = pymysql.connect(
   host='localhost',
   port=8080,
@@ -13,7 +16,7 @@ conn = pymysql.connect(
   db='wms_request_pipeline',
   charset='utf8mb4',
   cursorclass=pymysql.cursors.DictCursor)
-
+'''
 
 while (True):
   sms.incoming_sms()
