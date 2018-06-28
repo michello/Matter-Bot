@@ -1,11 +1,11 @@
 from flask import *
 import sms
-from db_connection import *
+#from db_connection import *
 
 # for database connection if needed
 
 app = Flask(__name__)
-db = MyDB()
+# db = MyDB()
 
 '''
 conn = pymysql.connect(
