@@ -8,6 +8,8 @@ from twilio.rest import Client
 
 from slackclient import SlackClient
 
+app = Flask(__name__)
+
 slack_token = open("slack_creds.txt","r").readline().strip()
 sc = SlackClient(slack_token)
 
@@ -33,6 +35,7 @@ def incoming_sms():
       channel="recommendations",
       text=record
     )
+  incoming = []
 
   # Start our TwiML response here
   resp = MessagingResponse()
