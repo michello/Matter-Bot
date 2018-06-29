@@ -1,9 +1,10 @@
+import os
 from flask import *
 from slackclient import SlackClient
 from appdef import app
-slack_token = open("slack_creds.txt","r").readline().strip()
+SLACK_TOKEN = os.environ['SLACK_TOKEN']
 
-sc = SlackClient(slack_token)
+sc = SlackClient(SLACK_TOKEN)
 
 '''
 sc.api_call(
