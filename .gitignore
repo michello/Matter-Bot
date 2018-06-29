@@ -2,3 +2,4 @@ slack_creds.txt
 *.pyc
 *.DS_STORE
 venv/
+ngrok
