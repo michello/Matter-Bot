@@ -65,8 +65,3 @@ def incoming_sms():
 
     resp.message(message)
     return str(resp)
-
-if __name__ == "__main__":
-  app.secret_key = SECRET_KEY
-  app.run(debug=True)
-  app.run()
