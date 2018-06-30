@@ -22,6 +22,7 @@ TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 t_client = Client(TWILIO_SID, TWILIO_TOKEN)
 s_client = SlackClient(SLACK_TOKEN)
 
+urgency = ['1', '2', '3', '4', '5']
 department = ['KITCHEN', 'PACKING', 'SANITATION', 'SHIPPING', 'FSQA']
 employee_id =['07021', '03053', '78534', '01273', '06295', '05217', '37482']
 employee_name = ['DANDAN LIN', 'MICHELLE LAM', 'RICHARD WU', 'HUI WAH CHIANG']
@@ -41,21 +42,18 @@ def incoming_sms():
 
     # Save the new counter value in the session
     session['counter'] = counter
-    message_from = request.values.get('From')
+    # message_from = request.values.get('From')
     message_body = request.values.get('Body').upper()
 
     message = ''
 
     if message_body == 'HI':
-      message = "What is the Level of urgency? (1-5)"
-    elif message_body ==
-      message = "Which department do you belong to?"
-    elif message_body
-      message = 'Hi, what is your First Name and Last Name?'
-    if
-    elif message_body in employee_name :
       message = "Thank you " + message_body +", please enter your Employee ID"
-    elif message_body in employee_id:
+    if message_body in employee_id:
+      message = "What is the Level of urgency? (1-5)"
+    elif message_body in urgency:
+      message = "Which department do you belong to?"
+    elif message_body in department:
       message = "What is your job title?"
     elif message_body in employee_title:
       message = "Thank you. You now can share your idea with us \nSend \'Done\' when you finish"
