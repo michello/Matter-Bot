@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from appdef import app#, db
 ## each page will have its own python file/module, which will be imported from here:
-import main, slack, sms
+import main, slack, sms, google_sheets
 
 if __name__ == "__main__":
   app.run('localhost', 5000, debug = True)
