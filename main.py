@@ -49,7 +49,9 @@ def incoming_sms():
 
     if message_body == 'HI':
       message = "Thank you " + message_body +", please enter your Employee ID"
-    if message_body in employee_id:
+    # TODO
+    # Check if the employee_id exist in the database
+    elif message_body in employee_id:
       message = "What is the Level of urgency? (1-5)"
     elif message_body in urgency:
       message = "Which department do you belong to?"
@@ -65,3 +67,8 @@ def incoming_sms():
 
     resp.message(message)
     return str(resp)
+
+if __name__ == "__main__":
+  app.secret_key = SECRET_KEY
+  app.run()
+  app.run(debug = True)
