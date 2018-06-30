@@ -22,9 +22,10 @@ TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 t_client = Client(TWILIO_SID, TWILIO_TOKEN)
 s_client = SlackClient(SLACK_TOKEN)
 
+department = ['KITCHEN', 'PACKING', 'SANITATION', 'SHIPPING', 'FSQA']
+employee_id =['07021', '03053', '78534', '01273', '06295', '05217', '37482']
 employee_name = ['DANDAN LIN', 'MICHELLE LAM', 'RICHARD WU', 'HUI WAH CHIANG']
-employee_id =['0702', '0305', '7853', '0127', '0629', '0521']
-job_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST', 'MACHINE OPERATOR', 'TECH', 'CUSTODIAN']
+employee_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST', 'MACHINE OPERATOR', 'TECH', 'CUSTODIAN']
 
 @app.route("/", methods=['GET'])
 def main():
@@ -46,12 +47,17 @@ def incoming_sms():
     message = ''
 
     if message_body == 'HI':
+      message = "What is the Level of urgency? (1-5)"
+    elif message_body ==
+      message = "Which department do you belong to?"
+    elif message_body
       message = 'Hi, what is your First Name and Last Name?'
+    if
     elif message_body in employee_name :
       message = "Thank you " + message_body +", please enter your Employee ID"
     elif message_body in employee_id:
       message = "What is your job title?"
-    elif message_body in job_title:
+    elif message_body in employee_title:
       message = "Thank you. You now can share your idea with us \nSend \'Done\' when you finish"
     elif message_body == 'DONE':
       message = "Thank you for using Matter Bot. Have a great day"
