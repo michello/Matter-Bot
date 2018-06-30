@@ -1,7 +1,7 @@
 # homepage
 # probably where we'll showcase the posts/exchanges that's been made
 from flask import *
-from appdef import app
+from appdef import app, conn
 
 import os
 from twilio.rest import Client
@@ -9,18 +9,20 @@ from slackclient import SlackClient
 from flask import Flask, request, redirect, session
 from twilio.twiml.messaging_response import MessagingResponse
 
+import unicodedata
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-SECRET_KEY = os.environ['SECRET_KEY']
-SLACK_TOKEN = os.environ['SLACK_TOKEN']
+#SECRET_KEY = os.environ['SECRET_KEY']
+#SLACK_TOKEN = os.environ['SLACK_TOKEN']
 
 TWILIO_SID = os.environ['TWILIO_SID']
 TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 
 # Create Twilio and Slack REST client object
 t_client = Client(TWILIO_SID, TWILIO_TOKEN)
-s_client = SlackClient(SLACK_TOKEN)
+#s_client = SlackClient(SLACK_TOKEN)
 
 urgency = ['1', '2', '3', '4', '5']
 department = ['KITCHEN', 'PACKING', 'SANITATION', 'SHIPPING', 'FSQA']
@@ -42,26 +44,26 @@ def incoming_sms():
 
     # Save the new counter value in the session
     session['counter'] = counter
-    # message_from = request.values.get('From')
-    message_body = request.values.get('Body').upper()
-
-    message = ''
+    message_body = request.values.get('Body', None)
 
     if message_body == 'HI':
       message = "Thank you " + message_body +", please enter your Employee ID"
-    if message_body in employee_id:
-      message = "What is the Level of urgency? (1-5)"
-    elif message_body in urgency:
-      message = "Which department do you belong to?"
-    elif message_body in department:
-      message = "What is your job title?"
-    elif message_body in employee_title:
-      message = "Thank you. You now can share your idea with us \nSend \'Done\' when you finish"
-    elif message_body == 'DONE':
-      message = "Thank you for using Matter Bot. Have a great day"
-    # else:
-      # TODO: where to save the data?
+    if message_body.find("[emp_id]") != -1:
+      message_body = message_body.encode('utf8')
+      message = message_body.split()
 
+      employee_id = str(message[1])
+      print(employee_id)
 
-    resp.message(message)
+      query = "SELECT * FROM Employee WHERE EMPLID='"+employee_id+"'"
+      cursor = conn.cursor()
+      cursor.execute(query)
+      hello = cursor.fetchall()
+      cursor.close()
+      print("entry: ", hello)
+
     return str(resp)
+
+if __name__ == "__main__":
+  app.secret_key = 'HELLOWORLD'
+  app.run('localhost', 5000)

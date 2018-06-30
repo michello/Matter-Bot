@@ -2,7 +2,7 @@ import os
 import main, slack
 
 from flask import Flask, render_template
-from appdef import app
+from appdef import app, conn
 
 # SECRET_KEY = os.environ['SECRET_KEY']
 
