@@ -82,7 +82,7 @@ def incoming_sms():
       resp_message = "What is your job title?"
 
     elif message_body.upper() in employee_title:
-      C["cookie_title"] = message_body
+      C["cookie_title"] = message_body.upper()
       resp_message = "Thank you. You now can share your idea with us."
 
     elif message_body.upper() == "DONE":
@@ -95,15 +95,15 @@ def incoming_sms():
       # storing the ticket into DB
       cursor = conn.cursor()
       cursor_one = conn.cursor()
+
       # Find current ticket reviewer
-      # TODO: Assign dept manager as the ticket reviewer
       reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+C["cookie_department"].value+"' AND title = 'MANAGER'"
       cursor_one.execute(reviewer_query)
-      reviewer = cursor_one.fetchone()[0]
+      reviewer = cursor_one.fetchone()
 
       query = 'INSERT INTO Ticket (idea, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
       time = datetime.now()
-      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer, time))
+      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer['EMPLID'], time))
       conn.commit()
       cursor.close()
 
