@@ -96,14 +96,14 @@ def incoming_sms():
       cursor = conn.cursor()
       cursor_one = conn.cursor()
       # Find current ticket reviewer
+      # TODO: Assign dept manager as the ticket reviewer
       reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+C["cookie_department"].value+"' AND title = 'MANAGER'"
       cursor_one.execute(reviewer_query)
-      reviewer = cursor_one.fetchone()
-      print (reviewer[0])
+      reviewer = cursor_one.fetchone()[0]
 
       query = 'INSERT INTO Ticket (idea, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
       time = datetime.now()
-      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer[0], time))
+      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer, time))
       conn.commit()
       cursor.close()
 
