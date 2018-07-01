@@ -1,17 +1,19 @@
-CREATE TABLE Person(
-  p_id INT AUTO_INCREMENT,
-  phone_number INT,
-  first_name VARCHAR (50),
-  last_name VARCHAR (50),
-  PRIMARY KEY (t_id)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE Employee (
+  EMPLID INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(100),
+  employee_name VARCHAR(255),
+  department VARCHAR(255),
+  groupname VARCHAR(255),
+  PRIMARY KEY(EMPLID)
+);
 
-CREATE TABLE Ticket(
-  t_id INT AUTO_INCREMENT,
-  p_id INT,
-  content VARCHAR (250),
-  dept_type VARCHAR(50),
-  FOREIGN KEY (p_id) REFERENCES Person (p_id)
-  PRIMARY KEY (t_id)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+CREATE TABLE Ticket (
+  ticket_id INT NOT NULL AUTO_INCREMENT,
+  idea TEXT,
+  urgency INT,
+  resolution VARCHAR(255),
+  in_charge INT NOT NULL ,
+  date_created DATETIME,
+  PRIMARY KEY (ticket_id),
+  FOREIGN KEY (in_charge) REFERENCES Employee(EMPLID)
+);
