@@ -14,6 +14,8 @@ from flask import Flask, request, redirect, session, make_response
 
 import unicodedata
 
+import datetime
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -40,10 +42,11 @@ def main():
 @app.route("/incoming_sms", methods=['GET', 'POST'])
 def incoming_sms():
   resp = MessagingResponse()
+  resp_message = ""
 
   if request.method == 'POST':
     counter = session.get('counter', 0)
-    counter += 1
+    # counter += 1
 
     # Save the new counter value in the session
     session['counter'] = counter
@@ -74,22 +77,34 @@ def incoming_sms():
         resp_message = "Please enter a valid Blue Apron ID"
 
     if message_body in urgency:
-      C["cookie_urgency"] = message_body
+      C["cookie_urgency"] = int(message_body)
       resp_message = "Which department do you belong to?"
 
-    if message_body in department:
+    if message_body.upper() in department:
       C["cookie_department"] = message_body
       resp_message = "What is your job title?"
 
-    if message_body in employee_title:
+    if message_body.upper() in employee_title:
       C["cookie_title"] = message_body
       resp_message = "Thank you. You now can share your idea with us \nSend \'Done\' when you finish"
 
-    if message_body == "DONE":
+    if message_body.upper() == "DONE":
+      C["cookie_body"] = message_body
       resp_message = "Thank you for using Matter Bot. Have a great day"
       session['counter'] = []
 
-  print (C)
+      # storing the ticket into DB
+      cursor = conn.cursor()
+      query = 'INSERT INTO Ticket (idea, urgency, date_created) VALUES (%s, %s, %s)'
+      time = datetime.datetime.now()
+      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, time))
+      conn.commit()
+      cursor.close()
+
+
+
+  # print (C)
+
   resp.message(resp_message)
   return str(resp)
 
