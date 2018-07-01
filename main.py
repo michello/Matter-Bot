@@ -1,8 +1,10 @@
 # homepage
 # probably where we'll showcase the posts/exchanges that's been made
 import os
-import twilio.twiml
 import Cookie
+import datetime
+import unicodedata
+import twilio.twiml
 
 from twilio import twiml
 from appdef import app, conn
@@ -12,14 +14,10 @@ from datetime import datetime, timedelta
 from twilio.twiml.messaging_response import MessagingResponse
 from flask import Flask, request, redirect, session, make_response
 
-import unicodedata
-
-import datetime
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-#SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ['SECRET_KEY']
 #SLACK_TOKEN = os.environ['SLACK_TOKEN']
 
 TWILIO_SID = os.environ['TWILIO_SID']
@@ -35,9 +33,9 @@ employee_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST',
 
 C = Cookie.SimpleCookie()
 
-@app.route("/", methods=['GET'])
-def main():
-    return render_template("index.html")
+# @app.route("/", methods=['GET'])
+# def main():
+#     return render_template("index.html")
 
 @app.route("/incoming_sms", methods=['GET', 'POST'])
 def incoming_sms():
@@ -45,23 +43,22 @@ def incoming_sms():
   resp_message = ""
 
   if request.method == 'POST':
-    counter = session.get('counter', 0)
+    # counter = session.get('counter', 0)
     # counter += 1
 
     # Save the new counter value in the session
-    session['counter'] = counter
+    # session['counter'] = counter
     message_body = request.values.get('Body', None)
     message_body = message_body.encode('utf8')
 
     if message_body.upper() == 'HI':
       resp_message = "Thank you " + message_body +", please enter your Employee ID"
 
-    if message_body.find("[emp_id]") != -1:
+    elif message_body.find("[emp_id]") != -1:
       message_body = message_body.encode('utf8')
       message = message_body.split()
 
       employee_id = str(message[1])
-
 
       query = "SELECT * FROM Employee WHERE EMPLID='"+employee_id+"'"
       cursor = conn.cursor()
@@ -76,40 +73,45 @@ def incoming_sms():
       else:
         resp_message = "Please enter a valid Blue Apron ID"
 
-    if message_body in urgency:
+    elif message_body in urgency:
       C["cookie_urgency"] = int(message_body)
       resp_message = "Which department do you belong to?"
 
-    if message_body.upper() in department:
-      C["cookie_department"] = message_body
+    elif message_body.upper() in department:
+      C["cookie_department"] = message_body.upper()
       resp_message = "What is your job title?"
 
-    if message_body.upper() in employee_title:
+    elif message_body.upper() in employee_title:
       C["cookie_title"] = message_body
-      resp_message = "Thank you. You now can share your idea with us \nSend \'Done\' when you finish"
+      resp_message = "Thank you. You now can share your idea with us."
 
-    if message_body.upper() == "DONE":
-      C["cookie_body"] = message_body
+    elif message_body.upper() == "DONE":
       resp_message = "Thank you for using Matter Bot. Have a great day"
-      session['counter'] = []
+      # session['counter'] = []
+    else:
+      C["cookie_body"] = message_body
+      resp_message = "\nSend \'Done\' when you finish"
 
       # storing the ticket into DB
       cursor = conn.cursor()
-      query = 'INSERT INTO Ticket (idea, urgency, date_created) VALUES (%s, %s, %s)'
-      time = datetime.datetime.now()
-      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, time))
+      cursor_one = conn.cursor()
+      # Find current ticket reviewer
+      reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+C["cookie_department"].value+"' AND title = 'MANAGER'"
+      cursor_one.execute(reviewer_query)
+      reviewer = cursor_one.fetchone()
+      print (reviewer[0])
+
+      query = 'INSERT INTO Ticket (idea, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
+      time = datetime.now()
+      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer[0], time))
       conn.commit()
       cursor.close()
-
-
-
-  # print (C)
 
   resp.message(resp_message)
   return str(resp)
 
 if __name__ == "__main__":
-  app.secret_key = 'HELLOWORLD'
+  app.secret_key = os.environ["SECRET_KEY"]
   app.run('localhost', 5000)
 
 
