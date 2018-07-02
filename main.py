@@ -33,7 +33,7 @@ TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 t_client = Client(TWILIO_SID, TWILIO_TOKEN)
 #s_client = SlackClient(SLACK_TOKEN)
 
-urgency = ['1', '2', '3']
+urgency = ['1', '2', '3', '4', '5']
 department = ['KITCHEN', 'PACKING', 'SANITATION', 'SHIPPING', 'FSQA']
 employee_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST', 'MACHINE OPERATOR', 'TECH', 'CUSTODIAN']
 
@@ -66,7 +66,7 @@ def incoming_sms():
       C["cookie_emplid"] = employee_id
 
       if (len(user) == 1):
-        resp_message = "Thanks! From 1-3, how urgent is your idea? 1 being the least urgent."
+        resp_message = "Thanks! From 1-5, how urgent is your idea? 1 being the least urgent."
       else:
         resp_message = "Please enter a valid Blue Apron ID."
 
