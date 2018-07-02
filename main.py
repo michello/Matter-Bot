@@ -27,7 +27,7 @@ TWILIO_TOKEN = os.environ['TWILIO_TOKEN']
 t_client = Client(TWILIO_SID, TWILIO_TOKEN)
 #s_client = SlackClient(SLACK_TOKEN)
 
-urgency = ['1', '2', '3', '4', '5']
+urgency = ['1', '2', '3']
 department = ['KITCHEN', 'PACKING', 'SANITATION', 'SHIPPING', 'FSQA']
 employee_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST', 'MACHINE OPERATOR', 'TECH', 'CUSTODIAN']
 
@@ -51,11 +51,11 @@ def incoming_sms():
     message_body = request.values.get('Body', None)
     message_body = message_body.encode('utf8')
 
-    if message_body.upper() == 'HI':
-      resp_message = "Thank you " + message_body +", please enter your Employee ID"
+    if message_body.upper() == 'IDEA':
+      resp_message = "Welcome! We're excited bout your idea! Let's get started. Please type your EID and begin with 'EID: '"
 
-    elif message_body.find("[emp_id]") != -1:
-      message_body = message_body.encode('utf8')
+    elif "EID: " in message_body.upper():
+
       message = message_body.split()
 
       employee_id = str(message[1])
@@ -69,43 +69,59 @@ def incoming_sms():
       C["cookie_emplid"] = employee_id
 
       if (len(user) == 1):
-        resp_message = "What is the Level of urgency? (1-5)"
+        resp_message = "Thanks! From 1-3, how urgent is your idea? 1 being the least urgent."
       else:
-        resp_message = "Please enter a valid Blue Apron ID"
+        resp_message = "Please enter a valid Blue Apron ID."
 
     elif message_body in urgency:
       C["cookie_urgency"] = int(message_body)
-      resp_message = "Which department do you belong to?"
+      resp_message = "Got it. In a sentence, please describe your idea. 'My idea is...'"
 
-    elif message_body.upper() in department:
-      C["cookie_department"] = message_body.upper()
-      resp_message = "What is your job title?"
+    elif "MY IDEA IS" in message_body.upper():
+      C["cookie_idea"] = message_body
+      resp_message = "Last part: How did you come up with your idea and why is it worth pursuing? 'I came up with this idea because...'"
 
-    elif message_body.upper() in employee_title:
-      C["cookie_title"] = message_body.upper()
-      resp_message = "Thank you. You now can share your idea with us."
-
-    elif message_body.upper() == "DONE":
-      resp_message = "Thank you for using Matter Bot. Have a great day"
+    elif "I CAME UP WITH THIS IDEA BECAUSE" in message_body.upper():
+      C["cookie_why"] = message_body
+      resp_message = "Thank you for using Matter Bot. Please send 'Done' when you're finished and have a great day!"
       # session['counter'] = []
     else:
-      C["cookie_body"] = message_body
-      resp_message = "\nSend \'Done\' when you finish"
-
-      # storing the ticket into DB
-      cursor = conn.cursor()
+      # Find department of the employee
       cursor_one = conn.cursor()
+      dept_query = "SELECT department FROM Employee WHERE EMPLID ='" + C["cookie_emplid"].value +"'"
+      cursor_one.execute(dept_query)
+      dept = cursor_one.fetchone()
+      cursor_one.close()
+      #print(dept['department'].encode('utf8'))
+
 
       # Find current ticket reviewer
-      reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+C["cookie_department"].value+"' AND title = 'MANAGER'"
-      cursor_one.execute(reviewer_query)
-      reviewer = cursor_one.fetchone()
 
-      query = 'INSERT INTO Ticket (idea, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
+      cursor_three = conn.cursor()
+      reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+dept['department'].encode('utf8')+"' AND title = 'MANAGER'"
+      cursor_three.execute(reviewer_query)
+      reviewer = cursor_three.fetchall()
+      cursor_three.close()
+      print(reviewer)
+
+      """
+      # storing the ticket into DB
+      print(C["cookie_idea"].value)
+      print(C["cookie_why"].value)
+      print(C["cookie_urgency"].value)
+      print(reviewer)
+      """
+
+      '''
+      # storing the ticket into the DB
+      cursor_two = conn.cursor()
+      query = 'INSERT INTO Ticket (idea, why, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
       time = datetime.now()
-      cursor.execute(query, (C["cookie_body"].value, C["cookie_urgency"].value, reviewer['EMPLID'], time))
+      cursor_two.execute(query, (C["cookie_idea"].value, C["cookie_why"].value, C["cookie_urgency"].value, reviewer['EMPLID'], time))
       conn.commit()
-      cursor.close()
+      cursor_two.close()
+      '''
+
 
   resp.message(resp_message)
   return str(resp)
