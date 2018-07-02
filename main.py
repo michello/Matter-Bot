@@ -17,6 +17,8 @@ from flask import Flask, request, redirect, session, make_response
 from google_sheets import *
 from google_sheets import insert
 
+from slack import *
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -123,6 +125,24 @@ def incoming_sms():
       # insert into google sheets
       insert(C["cookie_emplid"].value, C["cookie_urgency"].value, C["cookie_idea"].value, C["cookie_why"].value, trackingNo['ticket_id'])
 
+      # slack integration
+      channel_id = findDept(dept)
+
+      # find person name
+      cursor_five = conn.cursor()
+      emp_query = "SELECT employee_name FROM Employee WHERE EMPLID ='" + C["cookie_emplid"].value +"'"
+      cursor_five.execute(emp_query)
+      emp_name = cursor_five.fetchone()
+      cursor_five.close()
+
+      # find person groupname
+      cursor_six = conn.cursor()
+      group_query = "SELECT groupname FROM Employee WHERE EMPLID ='" + C["cookie_emplid"].value +"'"
+      cursor_six.execute(group_query)
+      group = cursor_six.fetchone()
+      cursor_six.close()
+
+      send_message(channel_id, "Department " + channel_id + " " + group, C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name, C["cookie_idea"].value, C["cookie_why"].value)
 
 
 
