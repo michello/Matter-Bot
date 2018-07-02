@@ -34,7 +34,7 @@ def send_message(channel_id, message, eid, urgency, emp_name, idea, why):
     message_attachments = [
         {
             "fallback": idea,
-            "author_name": "e_id: " + eid + ", " + emp_name,
+            "author_name": "employee id: " + eid + ", " + "employee name: "+ emp_name,
             "title": idea,
             "color": color,
             "text": why,
