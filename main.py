@@ -125,15 +125,8 @@ def incoming_sms():
       emp_name = cursor_five.fetchone()
       cursor_five.close()
 
-      # find person groupname
-      cursor_six = conn.cursor()
-      group_query = "SELECT groupname FROM Employee WHERE EMPLID ='" + C["cookie_emplid"].value +"'"
-      cursor_six.execute(group_query)
-      group = cursor_six.fetchone()
-      cursor_six.close()
-
       # sending message to slack
-      send_message(channel_id, "Department " + channel_id + " " + group["groupname"], C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name["employee_name"], C["cookie_idea"].value, C["cookie_why"].value)
+      send_message(channel_id, "Department " + channel_id, C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name["employee_name"], C["cookie_idea"].value, C["cookie_why"].value)
 
   resp.message(resp_message)
   return str(resp)
