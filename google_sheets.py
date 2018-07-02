@@ -1,5 +1,4 @@
 from flask import *
-from main import app
 
 import gspread
 
@@ -18,7 +17,7 @@ class GSheet:
     return(gspread.authorize(self.creds))
 
 
-def insert_init_sheets(e_id, u_level, idea, why, tracking_no):
+def insert(e_id, u_level, idea, why, tracking_no):
   client = GSheet().start()
   sheet = client.open("Request Ticket Tracker").sheet1
 

@@ -14,6 +14,9 @@ from datetime import datetime, timedelta
 from twilio.twiml.messaging_response import MessagingResponse
 from flask import Flask, request, redirect, session, make_response
 
+from google_sheets import *
+from google_sheets import insert
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -96,31 +99,31 @@ def incoming_sms():
 
 
       # Find current ticket reviewer
-
       cursor_three = conn.cursor()
       reviewer_query = "SELECT EMPLID FROM Employee WHERE department ='"+dept['department'].encode('utf8')+"' AND title = 'MANAGER'"
       cursor_three.execute(reviewer_query)
-      reviewer = cursor_three.fetchall()
+      reviewer = cursor_three.fetchone()
       cursor_three.close()
-      print(reviewer)
 
-      """
-      # storing the ticket into DB
-      print(C["cookie_idea"].value)
-      print(C["cookie_why"].value)
-      print(C["cookie_urgency"].value)
-      print(reviewer)
-      """
-
-      '''
       # storing the ticket into the DB
       cursor_two = conn.cursor()
-      query = 'INSERT INTO Ticket (idea, why, urgency, person_in_charge, date_created) VALUES (%s, %s, %s, %s)'
+      query = 'INSERT INTO ticket (idea, why, urgency, date_created, person_in_charge) VALUES (%s, %s, %s, %s, %s);'
       time = datetime.now()
-      cursor_two.execute(query, (C["cookie_idea"].value, C["cookie_why"].value, C["cookie_urgency"].value, reviewer['EMPLID'], time))
+      cursor_two.execute(query, (C["cookie_idea"].value, C["cookie_why"].value, int(C["cookie_urgency"].value), time, reviewer['EMPLID']))
       conn.commit()
       cursor_two.close()
-      '''
+
+      # getting the tracking id to insert to google sheets later
+      cursor_four = conn.cursor()
+      trackingNo_query = "SELECT ticket_id FROM ticket WHERE IDEA ='" + C["cookie_idea"].value +"'"
+      cursor_four.execute(trackingNo_query)
+      trackingNo = cursor_four.fetchone()
+      cursor_four.close()
+
+      # insert into google sheets
+      insert(C["cookie_emplid"].value, C["cookie_urgency"].value, C["cookie_idea"].value, C["cookie_why"].value, trackingNo['ticket_id'])
+
+
 
 
   resp.message(resp_message)
