@@ -22,7 +22,8 @@ from slack import send_message, findDept
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-SECRET_KEY = os.environ['SECRET_KEY']
+#SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = "WATEVER"
 #SLACK_TOKEN = os.environ['SLACK_TOKEN']
 
 TWILIO_SID = os.environ['TWILIO_SID']
@@ -138,7 +139,8 @@ def incoming_sms():
   return str(resp)
 
 if __name__ == "__main__":
-  app.secret_key = os.environ["SECRET_KEY"]
+  #app.secret_key = os.environ["SECRET_KEY"]
+  app.secret_key = "WATEVER"
   app.run('localhost', 5000)
 
 
