@@ -1,17 +1,13 @@
 from flask import *
-from appdef import app
+from main import app
+
 import gspread
+
+from json import dumps
+from datetime import datetime, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 
-<<<<<<< HEAD
-def insert_into_sheets(tracking, res, sm):
-  # use creds to create a client to interact with the Google Drive API
-  scope = ['https://spreadsheets.google.com/feeds',
-         'https://www.googleapis.com/auth/drive']
-  creds = ServiceAccountCredentials.from_json_keyfile_name('google_sheets_client_secret.json', scope)
-  client = gspread.authorize(creds)
 
-=======
 class GSheet:
   def __init__(self):
     self.scope = ['https://spreadsheets.google.com/feeds',
@@ -22,33 +18,38 @@ class GSheet:
     return(gspread.authorize(self.creds))
 
 
-#@app.route('/google-sheets')
-#def insert_init_sheets():
-def insert_into_sheets(tracking, res, sm):
+def insert_init_sheets(e_id, u_level, idea, why, tracking_no):
+  client = GSheet().start()
+  sheet = client.open("Request Ticket Tracker").sheet1
+
+  time = json.dumps(datetime.now(), indent=4, sort_keys=True, default=str)
+  row = [time, e_id, u_level, idea, why, tracking_no, False]
+
+  sheet.insert_row(row, len(sheet.get_all_values()) +1)
+
+
+"""
+@app.route('/google-sheets', methods=['GET'])
+def insert_init_sheets():
+# def insert_into_sheets(tracking, res, sm):
 
   client = GSheet().start()
->>>>>>> refs/remotes/origin/master
   # work book name
   sheet = client.open("Request Ticket Tracker").sheet1
   # row fields
-  row = [str(tracking), "N", str(sm)]
+  #row = [str(tracking), "N", str(sm)]
   # insert row at the bottom most
-<<<<<<< HEAD
-  sheet.insert_row(row, len(sheet.get_all_values()))
-=======
+
   sheet.insert_row(row, len(sheet.get_all_values()) + 1)
->>>>>>> refs/remotes/origin/master
   # print(sheet.row_count)
   print(len(sheet.get_all_values()))
-
-  return;
-<<<<<<< HEAD
+  return redirect(url_for('main'))
+  #return;
 
 #def update_sheets(tracking, res, sm):
-=======
   #return redirect(url_for('main'))
 
-# updates the
+# updates the values
 def update(tracking, value, mode):
   client = GSheet().start()
   sheet = client.open("Request Ticket Tracker").sheet1
@@ -63,5 +64,5 @@ def update(tracking, value, mode):
     col = cell_list[0].col + 1
 
   sheet.update_cell(row, col, value)
->>>>>>> refs/remotes/origin/master
+"""
 
