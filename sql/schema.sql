@@ -10,6 +10,7 @@ CREATE TABLE Employee (
 CREATE TABLE Ticket (
   ticket_id INT NOT NULL AUTO_INCREMENT,
   idea TEXT,
+  why TEXT,
   urgency INT,
   resolution VARCHAR(255),
   person_in_charge INT DEFAULT 0,
