@@ -19,16 +19,17 @@ slack_client = SlackClient(SLACK_TOKEN)
 #     return None
 
 def findDept(dept):
-    if (dept == 'fsqa' or dept == 'kitchen' or dept == 'packing' or dept == 'sanitation' or dept == 'shipping'):
-        return dept
+
+    if (dept == 'FSQA' or dept == 'KITCHEN' or dept == 'PACKING' or dept == 'SANITATION' or dept == 'SHIPPING'):
+        return dept.lower()
     else: return 'other'
 
 def send_message(channel_id, message, eid, urgency, emp_name, idea, why):
-    color = #008B00
-    if urgency == 5 or urgency == 4
-        color = #e50000
+    color = "#008B00"
+    if urgency == 5 or urgency == 4:
+        color = "#e50000"
     elif urgency == 3:
-        color =  #e5e500
+        color =  "#e5e500"
 
     message_attachments = [
         {

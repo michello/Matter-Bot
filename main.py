@@ -18,6 +18,7 @@ from google_sheets import *
 from google_sheets import insert
 
 from slack import *
+from slack import send_message, findDept
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -126,7 +127,7 @@ def incoming_sms():
       insert(C["cookie_emplid"].value, C["cookie_urgency"].value, C["cookie_idea"].value, C["cookie_why"].value, trackingNo['ticket_id'])
 
       # slack integration
-      channel_id = findDept(dept)
+      channel_id = findDept(dept["department"])
 
       # find person name
       cursor_five = conn.cursor()
@@ -142,7 +143,7 @@ def incoming_sms():
       group = cursor_six.fetchone()
       cursor_six.close()
 
-      send_message(channel_id, "Department " + channel_id + " " + group, C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name, C["cookie_idea"].value, C["cookie_why"].value)
+      send_message(channel_id, "Department " + channel_id + " " + group["groupname"], C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name["employee_name"], C["cookie_idea"].value, C["cookie_why"].value)
 
 
 
