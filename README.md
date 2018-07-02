@@ -18,12 +18,12 @@ From there, an employer can then approve or deny the idea, their choice of which
 is then recorded. All the information is stored in a MySQL database and inside 
 a spreadsheet file for future reference and resolution.
 
-## how to run:
+## How To Run:
 - install requirements.txt
 - enter python main.py
 - app should be running in  localhost:5000
 
-## built with:
+## Built With:
 - twilio
 - slackclient
 - python flask
