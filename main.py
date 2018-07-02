@@ -1,5 +1,4 @@
-# homepage
-# probably where we'll showcase the posts/exchanges that's been made
+
 import os
 import Cookie
 import datetime
