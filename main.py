@@ -128,8 +128,6 @@ def incoming_sms():
 
       # slack integration
       channel_id = findDept(dept["department"])
-      print (channel_id)
-      print (dept["department"])
 
       # find person name
       cursor_five = conn.cursor()
