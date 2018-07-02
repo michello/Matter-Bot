@@ -39,21 +39,12 @@ employee_title = ['RUNNER', 'ASSOCIATE', 'QA ASSOCIATE', 'KITTER', 'SPECIALIST',
 
 C = Cookie.SimpleCookie()
 
-# @app.route("/", methods=['GET'])
-# def main():
-#     return render_template("index.html")
-
 @app.route("/incoming_sms", methods=['GET', 'POST'])
 def incoming_sms():
   resp = MessagingResponse()
   resp_message = ""
 
   if request.method == 'POST':
-    # counter = session.get('counter', 0)
-    # counter += 1
-
-    # Save the new counter value in the session
-    # session['counter'] = counter
     message_body = request.values.get('Body', None)
     message_body = message_body.encode('utf8')
 
@@ -90,7 +81,7 @@ def incoming_sms():
     elif "I CAME UP WITH THIS IDEA BECAUSE" in message_body.upper():
       C["cookie_why"] = message_body
       resp_message = "Thank you for using Matter Bot. Please send 'Done' when you're finished and have a great day!"
-      # session['counter'] = []
+
     else:
       # Find department of the employee
       cursor_one = conn.cursor()
@@ -98,8 +89,6 @@ def incoming_sms():
       cursor_one.execute(dept_query)
       dept = cursor_one.fetchone()
       cursor_one.close()
-      #print(dept['department'].encode('utf8'))
-
 
       # Find current ticket reviewer
       cursor_three = conn.cursor()
@@ -143,9 +132,8 @@ def incoming_sms():
       group = cursor_six.fetchone()
       cursor_six.close()
 
+      # sending message to slack
       send_message(channel_id, "Department " + channel_id + " " + group["groupname"], C["cookie_emplid"].value, int(C["cookie_urgency"].value), emp_name["employee_name"], C["cookie_idea"].value, C["cookie_why"].value)
-
-
 
   resp.message(resp_message)
   return str(resp)
